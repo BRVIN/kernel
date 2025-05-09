@@ -100,6 +100,7 @@ void handle_scancode(void)
 	if (ctrl_state == PRESSED)
 	{
 		ctrl_key_handler(user_input);
+    move_cursor(g_x[g_current_screen], g_y[g_current_screen]);
 		return ;
 	}
 	if (scancode == SCODE_ENTER) {
