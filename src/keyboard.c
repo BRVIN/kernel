@@ -52,7 +52,6 @@ void ft_delete_last_entry(void)
 {
 	if (g_x[g_current_screen] < 2)
 		return;
-	// ft_put_entry_empty();
 	g_x[g_current_screen]--;
 
 	uint16_t cursor_pos = get_cursor_pos();
@@ -74,8 +73,6 @@ void handle_scancode(void)
 	static int ctrl_state = 0;
 
 	uint8_t scancode = read_ps2_scancode();
-	draw_dbg_scancode(scancode);
-	draw_dbg_cursor_pos();
 
 	if (scancode == SCODE_CTRL_PRESSED)
 	{
@@ -125,4 +122,14 @@ void handle_scancode(void)
 		bufid++;
 	}
 	move_cursor(g_x[g_current_screen], g_y[g_current_screen]);
+	for (size_t i = 0; i < (VGA_HEIGHT * VGA_WIDTH); ++i)
+	{
+		g_buffer[i] = g_screens[g_current_screen][i];
+	}
+	// DEBUG HEADER
+	draw_reset_top_bar();
+	draw_tabs();
+	draw_dbg_input(input);
+	draw_dbg_cursor_pos();
+	draw_dbg_scancode(scancode);
 }

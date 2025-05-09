@@ -90,11 +90,6 @@ void enter_protected_mode()
 
 void update_screen(void)
 {
-	show_tabs();
-	for (size_t i = 0; i < (VGA_HEIGHT * VGA_WIDTH); ++i)
-	{
-		g_buffer[i] = g_screens[g_current_screen][i];
-	}
 }
 
 
@@ -104,7 +99,7 @@ void kernel_main(void)
 	// init_gdt(); // KFS2
 
 	init_screen();
-	show_42();
+	draw_42_logo();
 	update_screen();
 	bool welcome_logo = true;
 	move_cursor(1, 3);
@@ -118,7 +113,7 @@ void kernel_main(void)
 				remove_logo();
 			}
 			handle_scancode();
-			update_screen();
+			// update_screen();
 		}
 	}
 	// KFS2

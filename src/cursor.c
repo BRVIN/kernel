@@ -2,6 +2,9 @@
 
 // TODO define cursor ports adress
 
+//  VGA CRT Controller (CRTC)
+// jtiojiojio
+
 void move_cursor(const int x, const int y)
 {
 	uint16_t pos = y * VGA_WIDTH + x;

@@ -8,6 +8,7 @@
 #include "screen.h"
 #include "date.h"
 #include "cursor.h"
+#include "show.h"
 
 extern uint8_t g_current_screen;
 

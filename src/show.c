@@ -1,6 +1,6 @@
 #include "show.h"
 
-void show_guides()
+void draw_guides()
 {
 	const uint8_t color = VGA_COLOR_WHITE;
 
@@ -13,7 +13,7 @@ void show_guides()
 	putstr_at("x", color, VGA_WIDTH / 2, VGA_HEIGHT / 2);
 }
 
-void show_42()
+void draw_42_logo()
 {
 	const uint8_t color = VGA_COLOR_WHITE;
 	int y = 10;
@@ -27,19 +27,24 @@ void show_42()
 	putstr_at("      ###   #####es#         ", color, x, y++);
 }
 
-void show_tabs()
+void draw_reset_top_bar()
 {
 	const uint8_t color = VGA_COLOR_WHITE;
 
 	for (size_t x = 0; x < VGA_WIDTH; x++)
 	{
+		putstr_at(" ", color, x, 1);
+	}
+	for (size_t x = 0; x < VGA_WIDTH; x++)
+	{
 		putstr_at("-", color, x, 0);
 		putstr_at("-", color, x, 2);
 	}
-	for (size_t x = 0; x < 46; x++)
-	{
-		putstr_at(" ", color, x, 1);
-	}
+}
+
+void draw_tabs()
+{
+	const uint8_t color = VGA_COLOR_WHITE;
 
 	int x = 36;
 	putstr_at("#", VGA_COLOR_GREEN, x + 1, 1);
@@ -47,55 +52,58 @@ void show_tabs()
 	putstr_at("#", VGA_COLOR_MAGENTA, x + 9, 1);
 	if (g_color[g_current_screen] == vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK))
 	{
-		putstr_at("[", VGA_COLOR_WHITE, x, 1);
-		putstr_at("]", VGA_COLOR_WHITE, x + 2, 1);
+		putstr_at("[", color, x, 1);
+		putstr_at("]", color, x + 2, 1);
 	}
 	if (g_color[g_current_screen] == vga_entry_color(VGA_COLOR_YELLOW, VGA_COLOR_BLACK))
 	{
-		putstr_at("[", VGA_COLOR_WHITE, x + 4, 1);
-		putstr_at("]", VGA_COLOR_WHITE, x + 6, 1);
+		putstr_at("[", color, x + 4, 1);
+		putstr_at("]", color, x + 6, 1);
 	}
 	if (g_color[g_current_screen] == vga_entry_color(VGA_COLOR_MAGENTA, VGA_COLOR_BLACK))
 	{
-		putstr_at("[", VGA_COLOR_WHITE, x + 8, 1);
-		putstr_at("]", VGA_COLOR_WHITE, x + 10, 1);
+		putstr_at("[", color, x + 8, 1);
+		putstr_at("]", color, x + 10, 1);
 	}
 
 	if (g_current_screen == 0)
 	{
-		putstr_at(" [ TAB 1 ]  ", VGA_COLOR_WHITE, 0, 1);
-		putstr_at("   TAB 2    ", VGA_COLOR_WHITE, 12, 1);
-		putstr_at("   TAB 3    ", VGA_COLOR_WHITE, 24, 1);
+		putstr_at(" [ TAB 1 ]  ", color, 0, 1);
+		putstr_at("   TAB 2    ", color, 12, 1);
+		putstr_at("   TAB 3    ", color, 24, 1);
 	}
 	if (g_current_screen == 1)
 	{
-		putstr_at("   TAB 1    ", VGA_COLOR_WHITE, 0, 1);
-		putstr_at(" [ TAB 2 ]  ", VGA_COLOR_WHITE, 12, 1);
-		putstr_at("   TAB 3    ", VGA_COLOR_WHITE, 24, 1);
+		putstr_at("   TAB 1    ", color, 0, 1);
+		putstr_at(" [ TAB 2 ]  ", color, 12, 1);
+		putstr_at("   TAB 3    ", color, 24, 1);
 	}
 	if (g_current_screen == 2)
 	{
-		putstr_at("   TAB 1    ", VGA_COLOR_WHITE, 0, 1);
-		putstr_at("   TAB 2    ", VGA_COLOR_WHITE, 12, 1);
-		putstr_at(" [ TAB 3 ]  ", VGA_COLOR_WHITE, 24, 1);
+		putstr_at("   TAB 1    ", color, 0, 1);
+		putstr_at("   TAB 2    ", color, 12, 1);
+		putstr_at(" [ TAB 3 ]  ", color, 24, 1);
 	}
 }
 
-void draw_dbg_scancode(const uint8_t scancode)
+void draw_dbg_input(char *str)
 {
-	for (size_t x = 0; x < VGA_WIDTH - 1; x++)
-	{
-		putstr_at(" ", VGA_COLOR_WHITE, x, 1);
-	}
 	const uint8_t color = VGA_COLOR_WHITE;
-	putstr_at("[", color, 76, 1);
-	puthex_at(scancode, 77, 1);
-	putstr_at("]", color, 79, 1);
+
+	int x = 47;
+
+	for (size_t i = 0; i < 10 && str[i] != '\0'; i++)
+	{
+		putchar_at(str[i], color, x + 1 + i, 1);
+	}
+	putstr_at("[", color, x, 1);
+	putstr_at("]", color, x + 10, 1);
 }
 
 void draw_dbg_cursor_pos(void)
 {
 	const uint8_t color = VGA_COLOR_WHITE;
+
 	// global var cursor position
 	int cx = g_x[g_current_screen];
 	int cy = g_y[g_current_screen];
@@ -106,4 +114,13 @@ void draw_dbg_cursor_pos(void)
 	cx = get_cursor_x(pos);
 	cy = get_cursor_y(pos);
 	putcoord(cx, cy, color, 68, 1);
+}
+
+void draw_dbg_scancode(const uint8_t scancode)
+{
+	const uint8_t color = VGA_COLOR_WHITE;
+
+	putstr_at("[", color, 76, 1);
+	puthex_at(scancode, 77, 1);
+	putstr_at("]", color, 79, 1);
 }

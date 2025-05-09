@@ -19,7 +19,9 @@ OK - define date cmos ports adress
 - header middle line remplie de - quand on commencer a scroll, (il faut vider toute la ligne a chaque fois) c est le contenu du buffer qui depasse dans le header UNIQUEMENT PENDANT LE PRESS et apres release is ok
 - backspace delete ne devrait pas suprimmer l espace du prompt icon( min pos 2)
 - afficher le command input char * dans le header pour debug
-- define cursor ports adress
 - mettre le promt tjs en blanc
 - check pour etre sur qu on est en i386
+
 - faire une seule version de inb outb
+- define cursor ports adress
+
