@@ -8,10 +8,12 @@
 #include "screen.h"
 #include "date.h"
 #include "cursor.h"
-#include "show.h"
+#include "draw.h"
 
 extern uint8_t g_current_screen;
 
+void clear_input(void);
+void display_prompt(void);
 void handle_scancode(void);
 
 static const char scancode_table[][2] = {

@@ -88,21 +88,13 @@ void enter_protected_mode()
 	asm volatile("sti");
 }
 
-void update_screen(void)
-{
-}
-
-
 void kernel_main(void)
 {
 	asm volatile("cli");
 	// init_gdt(); // KFS2
 
 	init_screen();
-	draw_42_logo();
-	update_screen();
 	bool welcome_logo = true;
-	move_cursor(1, 3);
 	while (true)
 	{
 		if (is_ps2_data_ready())
@@ -113,7 +105,6 @@ void kernel_main(void)
 				remove_logo();
 			}
 			handle_scancode();
-			// update_screen();
 		}
 	}
 	// KFS2

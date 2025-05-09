@@ -127,8 +127,11 @@ void ft_put_entry_empty(void)
 
 void display_prompt(void)
 {
- putchar('~');
- putchar(' ');
+  const uint8_t saved = g_color[g_current_screen];
+  g_color[g_current_screen] = VGA_COLOR_WHITE;
+  putchar('~');
+  putchar(' ');
+  g_color[g_current_screen] = saved;
 }
 
 void newline(void)
@@ -197,10 +200,21 @@ void init_screen(void)
   g_current_screen = 2;
   screen_yellow();
   display_prompt();
+
   g_current_screen = 1;
   screen_magenta();
   display_prompt();
+
   g_current_screen = 0;
   screen_green();
   display_prompt();
+	draw_42_logo();
+
+	move_cursor(1, 3);
+	draw_reset_top_bar();
+	draw_tabs();
+	for (size_t i = 0; i < (VGA_HEIGHT * VGA_WIDTH); ++i)
+  {
+    g_buffer[i] = g_screens[g_current_screen][i];
+  }
 }

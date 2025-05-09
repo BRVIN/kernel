@@ -6,9 +6,10 @@
 
 #include "io.h"
 #include "utils.h"
+#include "draw.h"
 #include "cursor.h"
 
-#define EMPTY_CHAR '.'
+#define EMPTY_CHAR ' '
 #define EMPTY_COLOR 4
 #define EMPTY_VGA ((uint16_t)EMPTY_CHAR | ((uint16_t)EMPTY_COLOR << 8))
 

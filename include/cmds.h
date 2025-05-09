@@ -4,12 +4,7 @@
 #include "utils.h"
 #include "screen.h"
 #include "date.h"
-
-void cmd_help(void);
-
-void cmd_exit(void);
-
-void cmd_date(void);
+#include "keyboard.h"
 
 void parse_commands(const char *input);
 

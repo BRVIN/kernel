@@ -18,7 +18,7 @@
 #include "screen.h"
 #include "printk.h"
 #include "keyboard.h"
-#include "show.h"
+#include "draw.h"
 #include "cursor.h"
 #include "date.h"
 

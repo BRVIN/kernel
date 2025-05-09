@@ -40,7 +40,7 @@ KFS_KERNEL_H	include/kernel.h	/^#define KFS_KERNEL_H$/;"	d
 KFS_KEYBOARD_H	include/keyboard.h	/^#define KFS_KEYBOARD_H$/;"	d
 KFS_PRINTK_H	include/printk.h	/^#define KFS_PRINTK_H$/;"	d
 KFS_SCREEN_H	include/screen.h	/^#define KFS_SCREEN_H$/;"	d
-KFS_SHOW_H	include/show.h	/^#define KFS_SHOW_H$/;"	d
+KFS_DRAW_H	include/draw.h	/^#define KFS_DRAW_H$/;"	d
 KFS_UTILS_H	include/utils.h	/^#define KFS_UTILS_H$/;"	d
 LD	Makefile	/^LD = sudo \/home\/ubuntu\/opt\/cross\/bin\/i686-elf-gcc$/;"	m
 LDFLAGS	Makefile	/^LDFLAGS = -T linker.ld -g -ffreestanding -O2 -nostdlib -lgcc -march=i386 -fno-builtin -fno-excep/;"	m
@@ -110,8 +110,8 @@ cppStandard	.vscode/c_cpp_properties.json	/^            "cppStandard": "gnu++17"
 ctrl_key_handler	src/keyboard.c	/^void ctrl_key_handler(char key)$/;"	f	typeref:typename:void
 defines	.vscode/c_cpp_properties.json	/^            "defines": [],$/;"	a	object:configurations.0
 display_prompt	src/screen.c	/^void display_prompt(void)$/;"	f	typeref:typename:void
-draw_dbg_cursor_pos	src/show.c	/^void draw_dbg_cursor_pos(void)$/;"	f	typeref:typename:void
-draw_dbg_scancode	src/show.c	/^void draw_dbg_scancode(const uint8_t scancode)$/;"	f	typeref:typename:void
+draw_dbg_cursor_pos	src/draw.c	/^void draw_dbg_cursor_pos(void)$/;"	f	typeref:typename:void
+draw_dbg_scancode	src/draw.c	/^void draw_dbg_scancode(const uint8_t scancode)$/;"	f	typeref:typename:void
 enter_protected_mode	src/kernel.c	/^void enter_protected_mode()$/;"	f	typeref:typename:void
 fclean	Makefile	/^fclean:$/;"	t
 files.associations	.vscode/settings.json	/^    "files.associations": {$/;"	o
@@ -178,9 +178,9 @@ screen_magenta	src/screen.c	/^void screen_magenta(void)$/;"	f	typeref:typename:v
 screen_yellow	src/screen.c	/^void screen_yellow(void)$/;"	f	typeref:typename:void
 set_gdt_entry	src/gdt.c	/^void set_gdt_entry(int index, uint32_t base, uint32_t limit, uint8_t access, uint8_t granularity/;"	f	typeref:typename:void
 set_vga_text_mode	src/screen.c	/^static void set_vga_text_mode(const size_t width, const size_t height)$/;"	f	typeref:typename:void	file:
-show_42	src/show.c	/^void show_42()$/;"	f	typeref:typename:void
-show_guides	src/show.c	/^void show_guides()$/;"	f	typeref:typename:void
-show_tabs	src/show.c	/^void show_tabs()$/;"	f	typeref:typename:void
+draw_42	src/draw.c	/^void draw_42()$/;"	f	typeref:typename:void
+draw_guides	src/draw.c	/^void draw_guides()$/;"	f	typeref:typename:void
+draw_tabs	src/draw.c	/^void draw_tabs()$/;"	f	typeref:typename:void
 stack_bottom	boot.s	/^stack_bottom:$/;"	l
 stack_top	boot.s	/^stack_top:$/;"	l
 strcmp	src/utils.c	/^int strcmp(const char *s1, const char *s2)$/;"	f	typeref:typename:int

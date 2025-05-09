@@ -14,7 +14,7 @@ SRC_C_LIST = gdt.c \
 						 keyboard.c \
 						 printk.c \
 						 screen.c \
-						 show.c \
+						 draw.c \
 						 utils.c \
 						 cursor.c \
 						 date.c \
