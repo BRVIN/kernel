@@ -9,16 +9,12 @@ LDFLAGS = -T linker.ld -ffreestanding -O2 -nostdlib -lgcc -march=i386 -fno-built
 INC_DIR = -Iinclude
 
 SRC_C_DIR = src
-SRC_C_LIST = gdt.c \
-						 io.c kernel.c \
+SRC_C_LIST = io.c kernel.c \
 						 keyboard.c \
-						 printk.c \
 						 screen.c \
 						 draw.c \
 						 utils.c \
-						 cursor.c \
-						 date.c \
-						 cmds.c
+						 cursor.c
 
 SRC_C = $(addprefix $(SRC_C_DIR)/, $(SRC_C_LIST))
 
