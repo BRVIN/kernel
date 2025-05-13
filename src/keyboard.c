@@ -102,7 +102,6 @@ void handle_scancode(void)
 	}
 	else if (scancode == SCODE_ENTER) {
 		input[g_current_screen][bufid] = '\0';
-		parse_commands(input[g_current_screen]);
 		newline();
 		display_prompt();
 		clear_input();
