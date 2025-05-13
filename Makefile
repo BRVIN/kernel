@@ -2,7 +2,7 @@ CC = sudo /home/ubuntu/opt/cross/bin/i686-elf-gcc
 AS = sudo /home/ubuntu/opt/cross/bin/i686-elf-as
 LD = sudo /home/ubuntu/opt/cross/bin/i686-elf-gcc
 
-CFLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -O2 -march=i386 -m32 
+CFLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -O2 -march=i386 -m32 -Wall -Wextra -Werror
 ASFLAGS =
 LDFLAGS = -T linker.ld -ffreestanding -O2 -nostdlib -lgcc -march=i386 -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs
 
