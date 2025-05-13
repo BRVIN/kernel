@@ -1,10 +1,11 @@
-C = sudo /home/ubuntu/opt/cross/bin/i686-elf-gcc
+CC = sudo /home/ubuntu/opt/cross/bin/i686-elf-gcc
 AS = sudo /home/ubuntu/opt/cross/bin/i686-elf-as
 LD = sudo /home/ubuntu/opt/cross/bin/i686-elf-gcc
 
-CFLAGS = -m32 -std=gnu99 -g -gsplit-dwarf -ffreestanding -O2 -Wall -Wextra -march=i386 -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -fcf-protection=none
+CFLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -O2 -march=i386 -m32 
+
 ASFLAGS =
-LDFLAGS = -T linker.ld -g -ffreestanding -O2 -nostdlib -lgcc -march=i386 -fno-builtin -fno-exceptions -fno-stack-protector -fno-rtti -nostdlib -nodefaultlibs
+LDFLAGS = -T linker.ld -ffreestanding -O2 -nostdlib -lgcc -march=i386 -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs
 
 INC_DIR = -Iinclude
 
@@ -27,7 +28,7 @@ OBJ = $(SRC_C:.c=.o) $(SRC_S:.s=.o)
 EXEC = ./isodir/boot/myos.bin 
 
 all: $(EXEC)
-	grub-mkrescue -o myos.iso isodir 
+	grub-mkrescue --compress=xz -o myos.iso isodir 
 	rm -f $(EXEC)
 
 %.o: %.c 
