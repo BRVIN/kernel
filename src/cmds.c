@@ -42,7 +42,7 @@ static void cmd_date(void)
 static void cmd_uname(void)
 {
 	newline();
-    putstr("myos.bin: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), statically linked, with debug_info, not stripped");
+    putstr("myos.bin: ELF 32-bit LSB executable, Intel 80386");
 }
 
 static void cmd_whoami(void)
