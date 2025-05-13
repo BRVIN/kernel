@@ -3,10 +3,8 @@
 
 #include <stdbool.h>
 #include "utils.h"
-#include "cmds.h"
 #include "io.h"
 #include "screen.h"
-#include "date.h"
 #include "cursor.h"
 #include "draw.h"
 
