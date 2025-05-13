@@ -24,9 +24,11 @@ SRC_C = $(addprefix $(SRC_C_DIR)/, $(SRC_C_LIST))
 
 SRC_S = boot.s gdt_load.s gdt_verify.s 
 OBJ = $(SRC_C:.c=.o) $(SRC_S:.s=.o) 
-EXEC = myos.bin 
+EXEC = ./isodir/boot/myos.bin 
 
-all: $(EXEC) 
+all: $(EXEC)
+	grub-mkrescue -o myos.iso isodir 
+	rm -f $(EXEC)
 
 %.o: %.c 
 	$(CC) $(CFLAGS) $(INC_DIR) -c $< -o $@ 
@@ -41,8 +43,8 @@ clean:
 	rm -f $(OBJ)
 	rm -f src/*.dwo
 
-fclean:
-	rm -f $(OBJ) $(EXEC) 
-	rm -f src/*.dwo
+fclean: clean
+	rm -f myos.iso
 
-.PHONY: all clean 
+start:
+	qemu-system-i386 -cdrom myos.iso
