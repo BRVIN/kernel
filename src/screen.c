@@ -144,30 +144,6 @@ void newline(void)
 
 /* INIT */
 
-// Fonction pour configurer une taille texte personnalisée
-static void set_vga_text_mode(const size_t width, const size_t height)
-{
-  // Adresse des registres du contrôleur VGA
-  const uint16_t VGA_CRTC_INDEX = 0x3D4; // Sélecteur de registre
-  const uint16_t VGA_CRTC_DATA = 0x3D5;  // Données du registre
-
-  // Désactiver l'écran pendant la configuration
-  outb(VGA_CRTC_INDEX, 0x17);
-  outb(VGA_CRTC_DATA, 0x00);
-
-  // Modifier la largeur (nombre de colonnes) à 20
-  outb(VGA_CRTC_INDEX, 0x01);          // Registre Horizontal Display End
-  outb(VGA_CRTC_DATA, width * 18 - 1); // Colonnes - 1
-
-  // Modifier la hauteur (nombre de lignes) à 10
-  outb(VGA_CRTC_INDEX, 0x12);           // Registre Vertical Display End
-  outb(VGA_CRTC_DATA, height * 16 - 1); // Lignes - 1
-
-  // Réactiver l'écran
-  outb(VGA_CRTC_INDEX, 0x17);
-  outb(VGA_CRTC_DATA, 0x80);
-}
-
 void remove_logo(void)
 {
   for (size_t y = 10; y < 17; y++)
@@ -182,7 +158,6 @@ void remove_logo(void)
 
 void init_screen(void)
 {
-  set_vga_text_mode(VGA_WIDTH, VGA_HEIGHT);
   g_buffer = (uint16_t *)0xB8000;
 
   for (size_t y = 0; y < VGA_HEIGHT; y++)
@@ -190,7 +165,6 @@ void init_screen(void)
     for (size_t x = 0; x < VGA_WIDTH; x++)
     {
       const size_t id = y * VGA_WIDTH + x;
-      g_buffer[id] = EMPTY_VGA;
 
       for (int i = 0; i < 3; ++i)
         g_screens[i][id] = EMPTY_VGA;
