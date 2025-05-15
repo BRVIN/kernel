@@ -9,9 +9,6 @@
 #error "no ix86-elf compiler"
 #endif
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
 #include "utils.h"
 #include "io.h"
 #include "screen.h"

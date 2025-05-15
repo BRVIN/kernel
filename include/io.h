@@ -1,7 +1,8 @@
 #ifndef KFS_IO_H
 #define KFS_IO_H
 
-#include <stdint.h> // uint8_t, uint16_t
+
+#include "utils.h"
 
 // PS/2 controller ports
 // state of the PS/2 controller

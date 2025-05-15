@@ -1,8 +1,14 @@
 #ifndef KFS_UTILS_H
 #define KFS_UTILS_H
 
-#include <stddef.h>
-#include <stdbool.h>
+typedef bool _Bool;
+#define true 1;
+#define false 0;
+
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned long size_t;
+
 #include "screen.h"
 #include "io.h"
 

@@ -1,7 +1,6 @@
 #ifndef KFS_KEYBOARD_H
 #define KFS_KEYBOARD_H
 
-#include <stdbool.h>
 #include "utils.h"
 #include "io.h"
 #include "screen.h"

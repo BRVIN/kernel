@@ -1,8 +1,7 @@
 #ifndef KFS_CURSOR_H
 #define KFS_CURSOR_H
 
-#include <stddef.h>
-#include <stdint.h>
+#include "utils.h"
 #include "screen.h"
 
 void move_cursor(const int x, const int y);

@@ -1,9 +1,6 @@
 #ifndef KFS_SCREEN_H
 #define KFS_SCREEN_H
 
-#include <stddef.h>
-#include <stdint.h>
-
 #include "io.h"
 #include "utils.h"
 #include "draw.h"
