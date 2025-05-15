@@ -1,6 +1,6 @@
 #include "utils.h"
 
-bool isprint(const char c)
+int isprint(const char c)
 {
 	return c >= 32 && c <= 126;
 }
