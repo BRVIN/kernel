@@ -11,9 +11,6 @@
 #define PRESSED 1
 #define RELEASED 0
 
-char input[3][128] = { 0 };
-uint8_t bufid = 0;
-
 void ctrl_key_handler(char key)
 {
 	// changement d'ecran
@@ -31,13 +28,6 @@ void ctrl_key_handler(char key)
 		recolor_screen_at(get_cursor_pos());
 	if (key == '$' || key == '%' || key == '^')
 		recolor_screen_at(0);
-}
-
-void clear_input(void) {
-	for (int i = 0; i < 128; i++) {
-		input[g_current_screen][i] = '\0';
-	}
-	bufid = 0;
 }
 
 void goto_next_screen(void)
@@ -60,10 +50,6 @@ void ft_delete_last_entry(void)
 	uint16_t y = cursor_y;
 	const size_t pos_to_erase = y * VGA_WIDTH + x;
   	g_screens[g_current_screen][pos_to_erase] = EMPTY_VGA;
-
-	if (bufid > 0)
-		bufid--;
-	input[g_current_screen][bufid] = '\0';
 }
 
 void handle_scancode(void)
@@ -101,10 +87,8 @@ void handle_scancode(void)
 		ctrl_key_handler(user_input);
 	}
 	else if (scancode == SCODE_ENTER) {
-		input[g_current_screen][bufid] = '\0';
 		newline();
 		display_prompt();
-		clear_input();
 	}
 	else if (scancode == SCODE_TAB) {
 		goto_next_screen();
@@ -115,8 +99,6 @@ void handle_scancode(void)
 	else if (isprint(user_input))
 	{
 		putchar(user_input);
-		input[g_current_screen][bufid] = user_input;
-		bufid++;
 	}
 	move_cursor(g_x[g_current_screen], g_y[g_current_screen]);
 	for (size_t i = 0; i < (VGA_HEIGHT * VGA_WIDTH); ++i)
@@ -126,7 +108,6 @@ void handle_scancode(void)
 	// DEBUG HEADER
 	draw_reset_top_bar();
 	draw_tabs();
-	draw_dbg_input(input[g_current_screen]);
 	draw_dbg_cursor_pos();
 	draw_dbg_scancode(scancode);
 }

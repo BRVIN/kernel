@@ -54,14 +54,7 @@ void putchar(const char c)
   g_screens[g_current_screen][get_gc_pos()] = vga_entry(c, g_color[g_current_screen]);
   g_x[g_current_screen]++;
   if (g_x[g_current_screen] == VGA_WIDTH)
-  {
-    g_x[g_current_screen] = 0;
-    g_y[g_current_screen]++;
-    if (g_y[g_current_screen] == VGA_HEIGHT)
-    {
-      auto_scroll();
-    }
-  }
+	  newline();
 }
 
 void putchar_at(const char c, uint8_t color, size_t x, size_t y)
