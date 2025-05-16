@@ -36,9 +36,9 @@ $(EXEC): $(OBJ)
 
 clean: 
 	rm -f $(OBJ)
+	rm -f $(EXEC)
 
 fclean: clean
-	rm -f $(EXEC)
 	rm -f myos.iso
 
 re: fclean all
