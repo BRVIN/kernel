@@ -7,7 +7,7 @@
 #include "cursor.h"
 
 #define EMPTY_CHAR ' '
-#define EMPTY_COLOR 4
+#define EMPTY_COLOR 15
 #define EMPTY_VGA ((uint16_t)EMPTY_CHAR | ((uint16_t)EMPTY_COLOR << 8))
 
 extern const size_t VGA_WIDTH;  // 80;
