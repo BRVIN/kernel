@@ -1,34 +1,36 @@
 #include "cursor.h"
 
-/*
+/*  
 //  VGA CRT Controller (CRTC)
-Port 0x3D4 : CRT Controller Index Register (CRTC Address Register)
-    Ce port est utilisé pour sélectionner l'index du registre CRT que l'on souhaite lire ou écrire.
-    Il agit comme un sélecteur de registre parmi les registres internes du contrôleur CRT.
-    Une fois l'index défini, la lecture/écriture se fait via le port 0x3D5.
 
-Port 0x3D5 : CRT Controller Data Register (CRTC Data Register)
-    Ce port est utilisé pour lire ou écrire la valeur dans le registre CRT sélectionné via 0x3D4.
-    En d'autres termes, après avoir défini l'index sur le port 0x3D4, ce port permet d'accéder aux données du registre correspondant.
+Port 0x3D4 : CRTC Address Register  
+    can select vga controller register for read/write operation
+    first need to define specific index, in second part data can be obtain with 0x3D5 port
+
+Port 0x3D5 : CRTC Data Register  
+    can read or write value on register selected with 0x3D4
 */
 
 void move_cursor(const int x, const int y)
 {
-	uint16_t pos = y * VGA_WIDTH + x;
+	uint16_t pos = y * VGA_WIDTH + x; // get pos from (x,y)
 
-	outb(PORT_CRTC_ADDRESS, CURSOR_LOCATION_LOW);
-	outb(PORT_CRTC_DATA, (uint8_t) (pos & 0xFF));
-	outb(PORT_CRTC_ADDRESS, CURSOR_LOCATION_HIGH);
-	outb(PORT_CRTC_DATA, (uint8_t) ((pos >> 8) & 0xFF));
+	outb(PORT_CRTC_ADDRESS, CURSOR_LOCATION_LOW); // set CRTC index to the cursor pos low byte
+	outb(PORT_CRTC_DATA, (uint8_t) (pos & 0xFF)); // send lower 8 bits of the cursor pos
+
+	outb(PORT_CRTC_ADDRESS, CURSOR_LOCATION_HIGH); // set CRTC index to the cursor pos high byte
+	outb(PORT_CRTC_DATA, (uint8_t) ((pos >> 8) & 0xFF)); // send the higher 8 bits of the cursor pos
 }
 
 uint16_t get_cursor_pos(void)
 {
 	uint16_t pos = 0;
-	outb(PORT_CRTC_ADDRESS, CURSOR_LOCATION_LOW);
-	pos |= inb(PORT_CRTC_DATA);
-	outb(PORT_CRTC_ADDRESS, CURSOR_LOCATION_HIGH);
-	pos |= ((uint16_t)inb(PORT_CRTC_DATA)) << 8;
+
+	outb(PORT_CRTC_ADDRESS, CURSOR_LOCATION_LOW); // set CRTC index to the cursor pos low byte
+	pos |= inb(PORT_CRTC_DATA); // get 8 low bits of cursor pos
+
+	outb(PORT_CRTC_ADDRESS, CURSOR_LOCATION_HIGH); // set CRTC index to the cursor pos high byte
+	pos |= ((uint16_t)inb(PORT_CRTC_DATA)) << 8; // get 8 high bits of cursor pos
 	return pos;
 }
 

@@ -1,7 +1,7 @@
 #include "screen.h"
 
-const size_t VGA_WIDTH = 80;  // 80;
-const size_t VGA_HEIGHT = 25; // 25;
+const size_t VGA_WIDTH = 80;
+const size_t VGA_HEIGHT = 25;
 
 size_t g_y[3] = {3, 3, 3};
 size_t g_x[3] = {0, 0, 0};
@@ -151,7 +151,7 @@ void remove_logo(void)
 
 void init_screen(void)
 {
-  g_buffer = (uint16_t *)0xB8000;
+  g_buffer = (uint16_t *)0xB8000; // VGA buffer address
 
   for (size_t y = 0; y < VGA_HEIGHT; y++)
   {

@@ -105,9 +105,6 @@ void handle_scancode(void)
 	{
 		g_buffer[i] = g_screens[g_current_screen][i];
 	}
-	// DEBUG HEADER
 	draw_reset_top_bar();
 	draw_tabs();
-	draw_dbg_cursor_pos();
-	draw_dbg_scancode(scancode);
 }
