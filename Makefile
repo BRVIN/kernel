@@ -9,21 +9,25 @@ LDFLAGS = -T linker.ld -ffreestanding -O2 -nostdlib -lgcc -march=i386 -fno-built
 INC_DIR = -Iinclude
 
 SRC_C_DIR = src
-SRC_C_LIST = io.c kernel.c \
-						 keyboard.c \
-						 screen.c \
-						 draw.c \
-						 utils.c \
-						 cursor.c
+SRC_C_LIST = io.c \
+	     kernel.c \
+	     keyboard.c \
+	     screen.c \
+	     draw.c \
+	     utils.c \
+	     cursor.c
 
 SRC_C = $(addprefix $(SRC_C_DIR)/, $(SRC_C_LIST))
 
 SRC_S = boot.s 
 OBJ = $(SRC_C:.c=.o) $(SRC_S:.s=.o) 
 EXEC = ./isodir/boot/myos.bin 
+ISO = myos.iso
 
-all: $(EXEC)
-	grub-mkrescue --compress=xz -o myos.iso isodir 
+all: $(ISO)
+
+$(ISO): $(EXEC)
+	grub-mkrescue --compress=xz -o $(ISO) isodir
 
 %.o: %.c 
 	$(CC) $(CFLAGS) $(INC_DIR) -c $< -o $@ 
@@ -39,11 +43,11 @@ clean:
 	rm -f $(EXEC)
 
 fclean: clean
-	rm -f myos.iso
+	rm -f $(ISO)
 
 re: fclean all
 
 start:
-	qemu-system-i386 -cdrom myos.iso
+	qemu-system-i386 -cdrom $(ISO)
 
 .PHONY: all clean fclean re start
