@@ -34,6 +34,18 @@ void init_gdt()
     set_gdt_entry(1, 0, 0xFFFFF, 0x9A, 0xCF); // Code segment
     set_gdt_entry(2, 0, 0xFFFFF, 0x92, 0xCF); // Data segment
 
+    // TODO add 4 others entry
+    /*
+    Null
+    Kernel Code (code exécutable en mode noyau, ring 0)
+    Kernel Data (données en mode noyau)
+    Kernel Stack (pile du noyau)
+
+    User Code (code exécutable en mode utilisateur, ring 3)
+    User Data (données utilisateur)
+    User Stack (pile utilisateur)
+    */
+
     /* v2*/
     // asm volatile("mov %0, %%eax" : : "r"(&gdt_ptr));
     //
