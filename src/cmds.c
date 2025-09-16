@@ -78,7 +78,7 @@ static void cmd_gdtcheck(void)
 	asm volatile("sgdt %0" : "=m"(gdtr));  // remplit gdtr avec la valeur du GDTR actuel
 
 	newline();
-    putstr("=== GDT KFS 2.3 ===");
+    putstr("=== GDT KFS 2.6 ===");
 	newline();
     putstr("GDTR base : 0x");
     print_hex(gdtr.base);

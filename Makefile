@@ -28,7 +28,7 @@ EXEC = ./isodir/boot/myos.bin
 
 all: $(EXEC)
 	grub-mkrescue --compress=xz -o myos.iso isodir 
-	rm -f $(EXEC)
+	#rm -f $(EXEC)
 
 %.o: %.c 
 	$(CC) $(CFLAGS) $(INC_DIR) -c $< -o $@ 
