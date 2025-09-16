@@ -22,4 +22,6 @@ void putcoord(const int cx, const int cy, uint8_t color, const int x, const int 
 
 int contains(char c, const char *str);
 
+void print_hex(uint32_t value);
+
 #endif /* KFS_UTILS_H */

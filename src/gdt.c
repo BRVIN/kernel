@@ -1,4 +1,5 @@
 #include "gdt.h"
+#include "utils.h"
 
 extern void load_gdt(struct GDTPointer *); // Assembly function
 //
@@ -49,11 +50,11 @@ void init_gdt()
     /* v2*/
     // asm volatile("mov %0, %%eax" : : "r"(&gdt_ptr));
     //
-    gdt_verify();
+    // gdt_verify();
 
-    load_gdt(&gdt_ptr);
+    // load_gdt(&gdt_ptr);
 
-    gdt_verify();
+    // gdt_verify();
 
     /* v1 ok  */
     /*
@@ -66,4 +67,27 @@ void init_gdt()
         asm volatile("ljmp $0x08, $.1");
         asm volatile(".1:");
     */
+}
+
+// Test simple des segments : lecture/écriture dans chaque segment
+void test_segment(uint16_t selector, const char* name)
+{
+    putstr("Testing segment: ");
+    putstr(name);
+    putstr(" ... ");
+
+    putstr(" OFF ");
+    return;
+
+    volatile int test_var = 0;
+
+    asm volatile (
+        "mov %%ax, %%ds \n\t"
+        "movl $0x12345678, %0 \n\t"
+        : "=m"(test_var)
+        : "a"(selector)
+    );
+
+    // Si on atteint cette ligne sans GPF, le segment fonctionne
+    putstr("OK\n");
 }

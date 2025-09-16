@@ -13,9 +13,11 @@ static void cmd_help(void)
 	newline();
     putstr("whoami : display current user");
 	newline();
-    putstr("version : display kernel build time");
+    putstr("gdt    : display gdt setup");
 	newline();
-    putstr("clear : clear the terminal screen");
+    putstr("version: display kernel build time");
+	newline();
+    putstr("clear  : clear the terminal screen");
 }
 
 static inline void __exit(unsigned short port, unsigned short val)
@@ -25,7 +27,6 @@ static inline void __exit(unsigned short port, unsigned short val)
 
 static void cmd_exit(void)
 {
-	//__exit(0x501, 0x2000);
 	__exit(0x604, 0x2000);
 	while (1)
 	{
@@ -71,6 +72,37 @@ static void cmd_clear(void)
 	g_y[g_current_screen] = 3;
 }
 
+static void cmd_gdtcheck(void)
+{
+    struct GDTPointer gdtr;
+	asm volatile("sgdt %0" : "=m"(gdtr));  // remplit gdtr avec la valeur du GDTR actuel
+
+	newline();
+    putstr("=== GDT KFS 2.3 ===");
+	newline();
+    putstr("GDTR base : 0x");
+    print_hex(gdtr.base);
+	newline();
+    putstr("GDTR limit: 0x");
+    print_hex(gdtr.limit);
+	newline();
+
+	test_segment(0x08, "Kernel Code");
+	newline();
+    test_segment(0x10, "Kernel Data");
+	newline();
+    test_segment(0, "Kernel Stack"); // todo
+	newline();
+    test_segment(0x18, "User Code");
+	newline();
+    test_segment(0x20, "User Data");
+	newline();
+    test_segment(0, "User Stack"); // todo
+	newline();
+
+    putstr("===== =====");
+}
+
 void parse_commands(const char *input)
 {
 	if (strcmp(input, "help") == 0)
@@ -87,4 +119,6 @@ void parse_commands(const char *input)
 		cmd_version();
 	if (strcmp(input, "clear") == 0)
 		cmd_clear();
+	if (strcmp(input, "gdt") == 0)
+		cmd_gdtcheck();
 }

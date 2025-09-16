@@ -5,6 +5,7 @@
 #include "screen.h"
 #include "date.h"
 #include "keyboard.h"
+#include "gdt.h"
 
 void parse_commands(const char *input);
 

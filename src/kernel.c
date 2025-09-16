@@ -88,12 +88,20 @@ void enter_protected_mode()
 	asm volatile("sti");
 }
 
-void kernel_main(void)
+
+extern void gdt_init(void);
+
+void kernel_main(void) // kfs1 main
 {
 	asm volatile("cli");
-	// init_gdt(); // KFS2
+
+	// init_gdt(); // KFS2 v1
+
+	gdt_init(); // KFS2 v2
+
 
 	init_screen();
+
 	bool welcome_logo = true;
 	while (true)
 	{
@@ -113,3 +121,31 @@ void kernel_main(void)
 	// test_protected_mode_transition();
 	// test_gdt_access();
 }
+
+/*
+void kernel_main(void) // kfs2 main 16/09
+{
+    asm volatile("cli");  // désactive interruptions
+
+    gdt_init();           // charge la GDT
+	pm32_start(); 			// passe en mode protégé + init segments/pile
+
+	// Code qui sera exécuté en mode protégé 32-bit
+	init_screen();
+
+    bool welcome_logo = true;
+    while (true)
+    {
+        if (is_ps2_data_ready())
+        {
+            if (welcome_logo)
+            {
+                welcome_logo = false;
+                remove_logo();
+            }
+            handle_scancode();
+        }
+    }
+}
+*/
+

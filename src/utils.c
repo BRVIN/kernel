@@ -84,3 +84,15 @@ int contains(char c, const char *str)
 	}
 	return 0;
 }
+
+void print_hex(uint32_t value) {
+    char hex[9];           // 8 digits + '\0'
+    hex[8] = '\0';
+
+    for (int i = 7; i >= 0; i--) {
+        int nibble = value & 0xF;
+        hex[i] = (nibble < 10) ? ('0' + nibble) : ('A' + nibble - 10);
+        value >>= 4;
+    }
+    putstr(hex);
+}
