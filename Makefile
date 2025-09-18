@@ -22,13 +22,13 @@ SRC_C_LIST = gdt.c \
 
 SRC_C = $(addprefix $(SRC_C_DIR)/, $(SRC_C_LIST))
 
-SRC_S = boot.s gdt_load.s gdt_verify.s 
+SRC_S = boot.s
 OBJ = $(SRC_C:.c=.o) $(SRC_S:.s=.o) 
 EXEC = ./isodir/boot/myos.bin 
 
 all: $(EXEC)
 	grub-mkrescue --compress=xz -o myos.iso isodir 
-	rm -f $(EXEC)
+	#rm -f $(EXEC)
 
 %.o: %.c 
 	$(CC) $(CFLAGS) $(INC_DIR) -c $< -o $@ 
