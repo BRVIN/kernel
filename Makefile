@@ -2,7 +2,7 @@ CC = sudo /home/ubuntu/opt/cross/bin/i686-elf-gcc
 AS = sudo /home/ubuntu/opt/cross/bin/i686-elf-as
 LD = sudo /home/ubuntu/opt/cross/bin/i686-elf-gcc
 
-CFLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -O2 -march=i386 -m32 
+CFLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -O2 -march=i386 -m32 -g -O0
 ASFLAGS =
 LDFLAGS = -T linker.ld -ffreestanding -O2 -nostdlib -lgcc -march=i386 -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs
 
@@ -18,13 +18,14 @@ SRC_C_LIST = gdt.c \
 						 utils.c \
 						 cursor.c \
 						 date.c \
+						 gdtr_check.c \
 						 cmds.c
 
 SRC_C = $(addprefix $(SRC_C_DIR)/, $(SRC_C_LIST))
 
-SRC_S = boot.s
+SRC_S = boot.s gdt.s gdt_flush.s read_gdtr.s
 OBJ = $(SRC_C:.c=.o) $(SRC_S:.s=.o) 
-EXEC = ./isodir/boot/myos.bin 
+EXEC = ./isodir/boot/myos.elf 
 
 all: $(EXEC)
 	grub-mkrescue --compress=xz -o myos.iso isodir 
@@ -39,11 +40,12 @@ all: $(EXEC)
 $(EXEC): $(OBJ) 
 	$(LD) $(LDFLAGS) -o $@ $^ 
 
-clean: 
+clean:
 	rm -f $(OBJ)
 
 fclean: clean
 	rm -f myos.iso
+	rm -f $(EXEC)
 
 start:
 	qemu-system-i386 -cdrom myos.iso
