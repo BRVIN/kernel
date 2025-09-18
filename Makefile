@@ -2,50 +2,114 @@ CC = sudo /home/ubuntu/opt/cross/bin/i686-elf-gcc
 AS = sudo /home/ubuntu/opt/cross/bin/i686-elf-as
 LD = sudo /home/ubuntu/opt/cross/bin/i686-elf-gcc
 
-CFLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -O2 -march=i386 -m32 
+CFLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -O2 -march=i386 -m32 -g -O0
 ASFLAGS =
-LDFLAGS = -T linker.ld -ffreestanding -O2 -nostdlib -lgcc -march=i386 -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs
+LDFLAGS = -T linker.ld -ffreestanding -O2 -nostdlib -lgcc -march=i386 -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -g
 
 INC_DIR = -Iinclude
-
 SRC_C_DIR = src
 SRC_C_LIST = gdt.c \
-						 io.c kernel.c \
-						 keyboard.c \
-						 printk.c \
-						 screen.c \
-						 draw.c \
-						 utils.c \
-						 cursor.c \
-						 date.c \
-						 cmds.c
+             io.c kernel.c \
+             keyboard.c \
+             printk.c \
+             screen.c \
+             draw.c \
+             utils.c \
+             cursor.c \
+             date.c \
+             cmds.c
 
 SRC_C = $(addprefix $(SRC_C_DIR)/, $(SRC_C_LIST))
-
 SRC_S = boot.s gdt_load.s gdt_verify.s 
 OBJ = $(SRC_C:.c=.o) $(SRC_S:.s=.o) 
+
+# Output files
+EXEC_DEBUG = myos.elf
 EXEC = ./isodir/boot/myos.bin 
+ISO = myos.iso
 
-all: $(EXEC)
-	grub-mkrescue --compress=xz -o myos.iso isodir 
-	rm -f $(EXEC)
+# Default target
+all: $(ISO)
 
+# Build ISO
+$(ISO): $(EXEC)
+	grub-mkrescue --compress=xz -o $(ISO) isodir 
+
+# Compile C files
 %.o: %.c 
 	$(CC) $(CFLAGS) $(INC_DIR) -c $< -o $@ 
 
+# Compile assembly files
 %.o: %.s 
 	$(AS) $(ASFLAGS) $< -o $@ 
 
+# Link kernel (creates both debug ELF and binary for ISO)
 $(EXEC): $(OBJ) 
-	$(LD) $(LDFLAGS) -o $@ $^ 
+	$(LD) $(LDFLAGS) -o $(EXEC_DEBUG) $^
+	cp $(EXEC_DEBUG) $@
 
+# Clean object files
 clean: 
 	rm -f $(OBJ)
 
+# Clean everything
 fclean: clean
-	rm -f myos.iso
+	rm -f $(ISO) $(EXEC) $(EXEC_DEBUG)
 
-start:
-	qemu-system-i386 -cdrom myos.iso
+# Start kernel normally
+start: $(ISO)
+	qemu-system-i386 -cdrom $(ISO)
 
-.PHONY: all clean fclean start
+# Debug with GDB (automated)
+debug: $(ISO)
+	@echo "Starting QEMU with GDB stub..."
+	@echo "Waiting for GDB connection on localhost:1234"
+	qemu-system-i386 -cdrom $(ISO) -s -S &
+	@sleep 2
+	gdb $(EXEC_DEBUG) \
+		-ex "target remote localhost:1234" \
+		-ex "break kernel_main" \
+		-ex "set confirm off" \
+		-ex "continue"
+
+# Debug manually (for more control)
+debug-manual: $(ISO)
+	@echo "=== Manual Debug Instructions ==="
+	@echo "1. QEMU is starting with GDB stub on port 1234"
+	@echo "2. In another terminal, run:"
+	@echo "   gdb $(EXEC_DEBUG)"
+	@echo "   (gdb) target remote localhost:1234"
+	@echo "   (gdb) break kernel_main"
+	@echo "   (gdb) continue"
+	@echo "================================="
+	qemu-system-i386 -cdrom $(ISO) -s -S
+
+# Debug with extra QEMU options (useful for troubleshooting)
+debug-verbose: $(ISO)
+	@echo "Starting QEMU with verbose output and GDB stub..."
+	qemu-system-i386 -cdrom $(ISO) -s -S -d int,cpu_reset -no-reboot &
+	@sleep 2
+	gdb $(EXEC_DEBUG) \
+		-ex "target remote localhost:1234" \
+		-ex "break kernel_main" \
+		-ex "set confirm off" \
+		-ex "continue"
+
+# Kill any running QEMU processes (useful if GDB session gets stuck)
+kill-qemu:
+	@pkill -f "qemu-system-i386" || true
+
+# Show debug info about the kernel
+info: $(EXEC_DEBUG)
+	@echo "=== Kernel Debug Information ==="
+	@echo "Debug ELF file: $(EXEC_DEBUG)"
+	@echo "Kernel binary: $(EXEC)"
+	@echo "ISO file: $(ISO)"
+	@echo ""
+	@echo "Functions in kernel:"
+	@nm $(EXEC_DEBUG) | grep -E " T " | head -10
+	@echo ""
+	@echo "Entry point:"
+	@readelf -h $(EXEC_DEBUG) | grep "Entry point"
+
+.PHONY: all clean fclean start debug debug-manual debug-verbose kill-qemu info
