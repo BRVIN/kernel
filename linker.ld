@@ -3,13 +3,15 @@ ENTRY(_start)
 
 SECTIONS
 {
-    . = 2M;
+    . = 0x800;
 
-    .text BLOCK(4K) : ALIGN(4K)
+    .text BLOCK(2K) : ALIGN(2K)
     {
-        *(.multiboot)
+	*(.lala)
+	*(.multiboot)
         *(.text)
     }
+
 
     .rodata BLOCK(4K) : ALIGN(4K)
     {
@@ -19,7 +21,6 @@ SECTIONS
     .data BLOCK(4K) : ALIGN(4K)
     {
         *(.data)
-        *(.gdt)
     }
 
     .bss BLOCK(4K) : ALIGN(4K)

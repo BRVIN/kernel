@@ -30,10 +30,10 @@ _start:
 
 .size _start, .-_start
 
-.section .gdt
+.section .lala
 .align 8
 .global gdt_start, gdt_end, gdt_descriptor
-.org 0x800
+#.org 0x800
 
 gdt_start:
     # Null segment
