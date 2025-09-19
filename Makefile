@@ -1,4 +1,4 @@
-CC = sudo /home/ubuntu/opt/cross/bin/i686-elf-gcc TESTT
+CC = sudo /home/ubuntu/opt/cross/bin/i686-elf-gcc
 AS = sudo /home/ubuntu/opt/cross/bin/i686-elf-as
 LD = sudo /home/ubuntu/opt/cross/bin/i686-elf-gcc
 
