@@ -1,9 +1,7 @@
-    .section .gdt
-    .align 8
-    .global gdt_start, gdt_end
-    .org 0x800 # décale les offsets internes de la section,
-    # mais pas l’adresse virtuelle finale du binaire
-    # fixée par le linker.
+.section .gdt
+.align 8
+.global gdt_start, gdt_end, gdt_descriptor
+.org 0x800
 
 gdt_start:
     # Null segment
@@ -19,7 +17,6 @@ gdt_start:
     .long 0x00CF9200
 gdt_end:
 
-    .global gdt_descriptor
 gdt_descriptor:
     .word gdt_end - gdt_start - 1 # taille (limit)
     .long gdt_start               # base (adresse)
