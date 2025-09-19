@@ -6,7 +6,7 @@ void kernel_main(void)
 	asm volatile("cli");
 
 	// init_gdt();
-    // gdt_flush(); // load gdt at 0x800
+    gdt_flush(); // load gdt at 0x800
 
 	init_screen();
 
@@ -23,6 +23,6 @@ void kernel_main(void)
 			handle_scancode();
 		}
 
-		// check_gdtr();
+		check_gdtr();
 	}
 }

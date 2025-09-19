@@ -3,14 +3,6 @@ ENTRY(_start)
 
 SECTIONS
 {
-    /* Placer la GDT à 0x800 */
-    . = 0x800;
-    .gdt :
-    {
-        KEEP(*(.gdt))
-    }
-
-    /* Aligner le reste du bootloader et kernel */
     . = 2M;
 
     .text BLOCK(4K) : ALIGN(4K)
@@ -27,6 +19,7 @@ SECTIONS
     .data BLOCK(4K) : ALIGN(4K)
     {
         *(.data)
+        *(.gdt)
     }
 
     .bss BLOCK(4K) : ALIGN(4K)

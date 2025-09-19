@@ -23,7 +23,7 @@ SRC_C_LIST = gdt.c \
 
 SRC_C = $(addprefix $(SRC_C_DIR)/, $(SRC_C_LIST))
 
-SRC_S = boot.s read_gdtr.s
+SRC_S = boot.s read_gdtr.s gdt_flush.s
 OBJ = $(SRC_C:.c=.o) $(SRC_S:.s=.o) 
 EXEC = ./isodir/boot/myos.elf 
 

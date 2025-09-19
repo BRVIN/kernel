@@ -20,51 +20,20 @@ stack_top:
 .global _start
 .type _start, @function
 _start:
-    # Initialisation pile
     mov $stack_top, %esp
 
-    # -------------------------
-    # Copier GDT à 0x800
-    # -------------------------
-    mov $gdt_start, %esi        # source dans le fichier
-    mov $0x800, %edi            # destination en RAM
-    mov $(gdt_end - gdt_start), %ecx
-    shr $2, %ecx                # nombre de mots de 4 octets
-1:
-    lodsl
-    stosl
-    loop 1b
+    call kernel_main
 
-    # -------------------------
-    # Charger GDT depuis 0x800
-    # -------------------------
-    lgdt [gdt_descriptor_ram]
-
-    # Charger segments
-    mov $0x10, %ax
-    mov %ax, %ds
-    mov %ax, %es
-    mov %ax, %fs
-    mov %ax, %gs
-    mov %ax, %ss
-
-    # Far jump pour flush CS
-    ljmp $0x08, $flush
-
-flush:
-    call kernel_main   # votre kernel
     cli
 1:  hlt
     jmp 1b
 
-.size _start, . - _start
+.size _start, .-_start
 
-# ==========================
-# GDT originale dans le fichier
-# ==========================
 .section .gdt
 .align 8
-.global gdt_start, gdt_end
+.global gdt_start, gdt_end, gdt_descriptor
+.org 0x800
 
 gdt_start:
     # Null segment
@@ -72,17 +41,14 @@ gdt_start:
     .long 0x00000000
 
     # Code segment 0x00CF9A000000FFFF
-    .long 0x0000FFFF
-    .long 0x00CF9A00
+    .long 0x0000FFFF   # low 32 bits
+    .long 0x00CF9A00   # high 32 bits
 
     # Data segment 0x00CF92000000FFFF
     .long 0x0000FFFF
     .long 0x00CF9200
 gdt_end:
 
-# --------------------------
-# Descripteur pour lgdt
-# --------------------------
-gdt_descriptor_ram:
-    .word gdt_end - gdt_start - 1   # limite
-    .long 0x800                     # base = 0x800
+gdt_descriptor:
+    .word gdt_end - gdt_start - 1 # taille (limit)
+    .long gdt_start               # base (adresse)
