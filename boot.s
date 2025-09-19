@@ -20,25 +20,27 @@ stack_top:
 .global _start
 .type _start, @function
 _start:
+    # Initialisation pile
     mov $stack_top, %esp
 
-# -------------------------
-# Copier la GDT à 0x800 en RAM
-# -------------------------
-    mov $gdt_start, %esi     # adresse de la GDT dans le fichier
-    mov $0x800, %edi         # adresse cible en RAM
+    # -------------------------
+    # Copier GDT à 0x800
+    # -------------------------
+    mov $gdt_start, %esi        # source dans le fichier
+    mov $0x800, %edi            # destination en RAM
     mov $(gdt_end - gdt_start), %ecx
-    shr $2, %ecx             # nombre de mots de 4 octets
+    shr $2, %ecx                # nombre de mots de 4 octets
 1:
     lodsl
     stosl
     loop 1b
 
-# -------------------------
-# Charger la GDT depuis 0x800
-# -------------------------
-    lgdt gdt_descriptor_ram
+    # -------------------------
+    # Charger GDT depuis 0x800
+    # -------------------------
+    lgdt [gdt_descriptor_ram]
 
+    # Charger segments
     mov $0x10, %ax
     mov %ax, %ds
     mov %ax, %es
@@ -46,23 +48,23 @@ _start:
     mov %ax, %gs
     mov %ax, %ss
 
-    ljmp $0x08, $flush       # far jump pour recharger CS
+    # Far jump pour flush CS
+    ljmp $0x08, $flush
 
 flush:
-    call kernel_main
-
+    call kernel_main   # votre kernel
     cli
 1:  hlt
     jmp 1b
 
-.size _start, .-_start
+.size _start, . - _start
 
 # ==========================
-# GDT dans le bootloader
+# GDT originale dans le fichier
 # ==========================
 .section .gdt
 .align 8
-.global gdt_start, gdt_end, gdt_descriptor
+.global gdt_start, gdt_end
 
 gdt_start:
     # Null segment
@@ -78,10 +80,9 @@ gdt_start:
     .long 0x00CF9200
 gdt_end:
 
-gdt_descriptor:
-    .word gdt_end - gdt_start - 1
-    .long gdt_start
-
+# --------------------------
+# Descripteur pour lgdt
+# --------------------------
 gdt_descriptor_ram:
-    .word gdt_end - gdt_start - 1
-    .long 0x800        # base = 0x800 en RAM
+    .word gdt_end - gdt_start - 1   # limite
+    .long 0x800                     # base = 0x800

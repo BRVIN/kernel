@@ -3,27 +3,35 @@ ENTRY(_start)
 
 SECTIONS
 {
-	. = 2M;
+    /* Placer la GDT à 0x800 */
+    . = 0x800;
+    .gdt :
+    {
+        KEEP(*(.gdt))
+    }
 
-	.text BLOCK(4K) : ALIGN(4K)
-	{
-		*(.multiboot)
-		*(.text)
-	}
+    /* Aligner le reste du bootloader et kernel */
+    . = 2M;
 
-	.rodata BLOCK(4K) : ALIGN(4K)
-	{
-		*(.rodata)
-	}
+    .text BLOCK(4K) : ALIGN(4K)
+    {
+        *(.multiboot)
+        *(.text)
+    }
 
-	.data BLOCK(4K) : ALIGN(4K)
-	{
-		*(.data)
-	}
+    .rodata BLOCK(4K) : ALIGN(4K)
+    {
+        *(.rodata)
+    }
 
-	.bss BLOCK(4K) : ALIGN(4K)
-	{
-		*(.COMMON)
-		*(.bss)
-	}
+    .data BLOCK(4K) : ALIGN(4K)
+    {
+        *(.data)
+    }
+
+    .bss BLOCK(4K) : ALIGN(4K)
+    {
+        *(.bss)
+        *(COMMON)
+    }
 }
