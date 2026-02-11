@@ -7,11 +7,10 @@ SECTIONS
 
     .text BLOCK(2K) : ALIGN(2K)
     {
-	*(.lala)
-	*(.multiboot)
+	    *(.gdt)
+	    *(.multiboot)
         *(.text)
     }
-
 
     .rodata BLOCK(4K) : ALIGN(4K)
     {

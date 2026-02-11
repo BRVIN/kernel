@@ -30,7 +30,7 @@ _start:
 
 .size _start, .-_start
 
-.section .lala
+.section .gdt
 .align 8
 .global gdt_start, gdt_end, gdt_descriptor
 #.org 0x800

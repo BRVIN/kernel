@@ -47,7 +47,20 @@ fclean: clean
 	rm -f myos.iso
 	rm -f $(EXEC)
 
+re: fclean
+	all
+
 start:
 	qemu-system-i386 -cdrom myos.iso
+
+startd:
+	qemu-system-i386 -cdrom myos.iso -s -S
+
+
+iso:
+	qemu-system-i386 -cdrom myos.iso
+
+elf:
+	qemu-system-i386 -kernel isodir/boot/myos.elf
 
 .PHONY: all clean fclean start
