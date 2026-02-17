@@ -16,6 +16,8 @@ void putstr(const char *str);
 
 void putnbr_at(int n, uint8_t color, int x, int y);
 
+void puthex(uint32_t val);
+
 void puthex_at(const uint8_t scancode, const int x, const int y);
 
 void putcoord(const int cx, const int cy, uint8_t color, const int x, const int y);

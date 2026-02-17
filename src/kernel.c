@@ -1,13 +1,12 @@
 #include "kernel.h"
 
-extern void gdt_flush(void);
+#include <stdint.h>
+
+extern void kernel_main(void);
+
+
 void kernel_main(void)
 {
-	asm volatile("cli");
-
-	// init_gdt();
-    gdt_flush(); // load gdt at 0x800
-
 	init_screen();
 
 	bool welcome_logo = true;
@@ -23,6 +22,5 @@ void kernel_main(void)
 			handle_scancode();
 		}
 
-		check_gdtr();
 	}
 }

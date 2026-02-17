@@ -5,9 +5,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-/* gdt */
-void init_gdt(void);
-
 // Define a GDT entry
 struct GDTEntry
 {

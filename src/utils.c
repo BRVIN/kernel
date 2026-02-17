@@ -51,6 +51,16 @@ void	putnbr_at(int n, uint8_t color, int x, int y)
   }
 }
 
+void puthex(uint32_t val)
+{
+    const char hex[] = "0123456789ABCDEF";
+    putstr("0x");  // préfixe hexadécimal
+
+    for (int i = 28; i >= 0; i -= 4) {
+        putchar(hex[(val >> i) & 0xF]);
+    }
+}
+
 void puthex_at(const uint8_t scancode, const int x, const int y)
 {
 	static const char hex_chars[] = "0123456789ABCDEF";
