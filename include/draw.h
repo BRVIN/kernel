@@ -2,7 +2,6 @@
 #define KFS_DRAW_H
 
 #include "screen.h"
-#include "cursor.h"
 
 void draw_guides();
 void draw_42_logo();

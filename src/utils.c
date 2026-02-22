@@ -26,13 +26,49 @@ size_t strlen(const char *str)
     return i;
 }
 
+/* PUTSTR */
+
 void putstr(const char *str)
 {
 	for (int i = 0; str[i] != '\0'; i++)
 		putchar(str[i]);
 }
 
-void	putnbr_at(int n, uint8_t color, int x, int y)
+void putstr_nl(const char *str)
+{
+	for (int i = 0; str[i] != '\0'; i++)
+		putchar(str[i]);
+	newline();
+}
+
+/* PUTNBR */
+
+void putnbr(int n)
+{
+	if (n >= 0)
+	{
+		if (n > 9)
+		{
+      putnbr(n / 10);
+    }
+		putchar(n % 10 + 48);
+	}
+	else if (n == -2147483648)
+		putstr("-2147483648");
+	else
+	{
+		putchar('-');
+    putnbr(-n);
+  }
+}
+
+void putnbr_nl(int n)
+{
+	putnbr(n);
+	newline();
+}
+
+void putnbr_at(int n, uint8_t color, int x, int y)
 {
 	if (n >= 0)
 	{
@@ -51,6 +87,8 @@ void	putnbr_at(int n, uint8_t color, int x, int y)
   }
 }
 
+/* PUTHEX */
+
 void puthex(uint32_t val)
 {
     const char hex[] = "0123456789ABCDEF";
@@ -59,6 +97,25 @@ void puthex(uint32_t val)
     for (int i = 28; i >= 0; i -= 4) {
         putchar(hex[(val >> i) & 0xF]);
     }
+}
+
+void puthex_nl(uint32_t val)
+{
+	puthex(val);
+	newline();
+}
+
+void puthex_t(const char *str, uint32_t val)
+{
+	putstr(str);
+	puthex(val);
+}
+
+void puthex_tnl(const char *str, uint32_t val)
+{
+	putstr(str);
+	puthex(val);
+	newline();
 }
 
 void puthex_at(const uint8_t scancode, const int x, const int y)
@@ -72,6 +129,8 @@ void puthex_at(const uint8_t scancode, const int x, const int y)
   putchar_at(hex_chars[low_nibble], VGA_COLOR_GREEN, x + 1, y);
 }
 
+/* SCREEN COORD */
+
 void putcoord(const int cx, const int cy, uint8_t color, const int x, const int y)
 {
 	putstr_at("(", color, x, y);
@@ -81,16 +140,41 @@ void putcoord(const int cx, const int cy, uint8_t color, const int x, const int 
 	putstr_at(")", color, x + 6, y);
 }
 
-int contains(char c, const char *str)
+/* GDT */
+
+static void print_selector(uint16_t selector, const char *name)
 {
-	int i = 0;
-	while (str[i] != '\0')
-	{
-		if (str[i] == c)
-		{
-			return 1;
-		}
-		i++;
+	uint16_t index = get_index(selector);
+	uint8_t dpl = get_dpl(index);
+	puthex(selector);
+	putstr(" | ");
+	putnbr(index);
+	putstr("  | ");
+	putnbr(dpl);
+	putstr("    | ");
+	putstr_nl(name);
+}
+
+void print_gdt_selectors()
+{
+	putstr_nl("----- GDT selectors -----");
+	putstr_nl("addr       | id | ring | selector");
+	print_selector(get_cs(), "CS");
+	print_selector(get_ds(), "DS");
+	print_selector(get_ss(), "SS");
+}
+
+void print_gdt_segments()
+{
+	putstr_nl("----- GDT segments -----");
+	putstr_nl("addr       | id | ring");
+    for (int i = 0; i <= 6; i++)
+    {
+		puthex(i * 0x8);
+		putstr(" | ");
+		putnbr(i);
+		putstr("  | ");
+		putnbr(get_dpl(i));
+		newline();
 	}
-	return 0;
 }

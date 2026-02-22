@@ -7,16 +7,16 @@ static unsigned char bcd_to_bin(unsigned char bcd)
 
 static void get_system_time(int *hour, int *minute, int *second)
 {
-    *second = bcd_to_bin(read_cmos(0x00)); // Secondes
-    *minute = bcd_to_bin(read_cmos(0x02)); // Minutes
-    *hour = bcd_to_bin(read_cmos(0x04));   // Heures
+    *second = bcd_to_bin(read_cmos(0x00));
+    *minute = bcd_to_bin(read_cmos(0x02));
+    *hour = bcd_to_bin(read_cmos(0x04));
 }
 
 static void get_system_date(int *day, int *month, int *year)
 {
-    *day = bcd_to_bin(read_cmos(0x07));   // Jour
-    *month = bcd_to_bin(read_cmos(0x08)); // Mois
-    *year = bcd_to_bin(read_cmos(0x09));  // Année (sur 2 chiffres)
+    *day = bcd_to_bin(read_cmos(0x07));
+    *month = bcd_to_bin(read_cmos(0x08));
+    *year = bcd_to_bin(read_cmos(0x09));
 }
 
 static void print_2digits(int value)
@@ -25,7 +25,6 @@ static void print_2digits(int value)
     putchar('0' + (value % 10));
 }
 
-// Convertit un entier en chaîne (4 chiffres)
 static void print_4digits(int value)
 {
     putchar('0' + (value / 1000) % 10);
@@ -42,8 +41,8 @@ void print_date(void)
 
     // year fix
     y += 2000;
-    //hour fix (+2 heures)
-    h = (h + 2) % 24;
+    //hour fix (+1h)
+    h = (h + 1) % 24;
 
     print_2digits(d);
     putchar('/');

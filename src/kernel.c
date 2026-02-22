@@ -1,26 +1,16 @@
 #include "kernel.h"
 
-#include <stdint.h>
-
 extern void kernel_main(void);
-
 
 void kernel_main(void)
 {
 	init_screen();
 
-	bool welcome_logo = true;
 	while (true)
 	{
 		if (is_ps2_data_ready())
 		{
-			if (welcome_logo == true)
-			{
-				welcome_logo = false;
-				remove_logo();
-			}
 			handle_scancode();
 		}
-
 	}
 }

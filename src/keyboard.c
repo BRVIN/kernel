@@ -113,6 +113,11 @@ void handle_scancode(void)
 	else if (scancode == SCODE_BACKSPACE) {
 		ft_delete_last_entry();
 	}
+	else if (scancode == SCODE_ESCAPE) {
+		clear_screen();
+		display_prompt();
+		clear_input();
+	}
 	else if (isprint(user_input))
 	{
 		putchar(user_input);
@@ -130,4 +135,15 @@ void handle_scancode(void)
 	draw_dbg_input(input[g_current_screen]);
 	draw_dbg_cursor_pos();
 	draw_dbg_scancode(scancode);
+}
+
+void clear_screen(void)
+{
+	for (size_t i = 0; i < (VGA_HEIGHT * VGA_WIDTH); ++i)
+	{
+		g_screens[g_current_screen][i] = EMPTY_VGA;
+		clear_input();
+	}
+	g_x[g_current_screen] = 0;
+	g_y[g_current_screen] = 3;
 }

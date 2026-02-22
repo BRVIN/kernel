@@ -11,14 +11,14 @@ uint16_t *g_buffer;
 uint16_t g_screens[3][2000];
 uint8_t g_current_screen = 0;
 
-static inline int get_gc_pos(void)
-{
-  return (g_y[g_current_screen] * VGA_WIDTH + g_x[g_current_screen]);
-}
-
 uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg)
 {
   return fg | bg << 4;
+}
+
+static inline int get_gc_pos(void)
+{
+  return (g_y[g_current_screen] * VGA_WIDTH + g_x[g_current_screen]);
 }
 
 static inline uint16_t vga_entry(unsigned char uc, uint8_t color)
@@ -112,14 +112,14 @@ void recolor_screen_at(uint16_t start_pos) {
   }
 }
 
-void recolor_cursor(void)
+static void recolor_cursor(void)
 {
   uint16_t cursor_pos = get_cursor_pos();
   char c = g_screens[g_current_screen][cursor_pos];
   g_screens[g_current_screen][cursor_pos] = vga_entry(c, g_color[g_current_screen]);
 }
 
-void ft_put_entry_empty(void)
+static void ft_put_entry_empty(void)
 {
   const size_t pos = g_y[g_current_screen] * VGA_WIDTH + g_x[g_current_screen];
   g_screens[g_current_screen][pos] = EMPTY_VGA ;
@@ -170,9 +170,9 @@ static void set_vga_text_mode(const size_t width, const size_t height)
 
 void remove_logo(void)
 {
-  for (size_t y = 10; y < 17; y++)
+  for (size_t y = 0; y < 25; y++)
   {
-    for (size_t x = 25; x < 54; x++)
+    for (size_t x = 0; x < 80; x++)
     {
       const size_t id = y * VGA_WIDTH + x;
       g_screens[g_current_screen][id] = EMPTY_VGA;
@@ -207,8 +207,33 @@ void init_screen(void)
 
   g_current_screen = 0;
   screen_green();
-  display_prompt();
+
 	draw_42_logo();
+
+	for (size_t i = 0; i < (VGA_HEIGHT * VGA_WIDTH); ++i)
+  {
+    g_buffer[i] = g_screens[g_current_screen][i];
+  }
+
+  while (true)
+  {
+    if (is_ps2_data_ready())
+    {
+      read_ps2_scancode();
+      break;
+    }
+  }
+  while (true)
+  {
+    if (is_ps2_data_ready())
+    {
+      read_ps2_scancode();
+      break;
+    }
+  }
+
+  remove_logo();
+  display_prompt();
 
 	move_cursor(1, 3);
 	draw_reset_top_bar();
@@ -217,4 +242,48 @@ void init_screen(void)
   {
     g_buffer[i] = g_screens[g_current_screen][i];
   }
+}
+
+
+/* CURSOR */
+
+/* VGA CRT Controller (CRTC)
+Port 0x3D4 : CRT Controller Index Register (CRTC Address Register)
+    Ce port est utilisé pour sélectionner l'index du registre CRT que l'on souhaite lire ou écrire.
+    Il agit comme un sélecteur de registre parmi les registres internes du contrôleur CRT.
+    Une fois l'index défini, la lecture/écriture se fait via le port 0x3D5.
+
+Port 0x3D5 : CRT Controller Data Register (CRTC Data Register)
+    Ce port est utilisé pour lire ou écrire la valeur dans le registre CRT sélectionné via 0x3D4.
+    En d'autres termes, après avoir défini l'index sur le port 0x3D4, ce port permet d'accéder aux données du registre correspondant.
+*/
+
+void move_cursor(const int x, const int y)
+{
+	uint16_t pos = y * VGA_WIDTH + x;
+
+	outb(PORT_CRTC_ADDRESS, CURSOR_LOCATION_LOW);
+	outb(PORT_CRTC_DATA, (uint8_t) (pos & 0xFF));
+	outb(PORT_CRTC_ADDRESS, CURSOR_LOCATION_HIGH);
+	outb(PORT_CRTC_DATA, (uint8_t) ((pos >> 8) & 0xFF));
+}
+
+uint16_t get_cursor_pos(void)
+{
+	uint16_t pos = 0;
+	outb(PORT_CRTC_ADDRESS, CURSOR_LOCATION_LOW);
+	pos |= inb(PORT_CRTC_DATA);
+	outb(PORT_CRTC_ADDRESS, CURSOR_LOCATION_HIGH);
+	pos |= ((uint16_t)inb(PORT_CRTC_DATA)) << 8;
+	return pos;
+}
+
+uint16_t get_cursor_x(const uint16_t pos)
+{
+	return pos % VGA_WIDTH;
+}
+
+uint16_t get_cursor_y(const uint16_t pos)
+{
+	return pos / VGA_WIDTH;
 }

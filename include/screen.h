@@ -7,10 +7,9 @@
 #include "io.h"
 #include "utils.h"
 #include "draw.h"
-#include "cursor.h"
 
 #define EMPTY_CHAR ' '
-#define EMPTY_COLOR 4
+#define EMPTY_COLOR 0
 #define EMPTY_VGA ((uint16_t)EMPTY_CHAR | ((uint16_t)EMPTY_COLOR << 8))
 
 extern const size_t VGA_WIDTH;  // 80;
@@ -60,9 +59,14 @@ void recolor_screen_at(uint16_t start_pos);
 void putchar(const char c);
 void putchar_at(const char c, uint8_t color, size_t x, size_t y);
 void putstr_at(const char *str, uint8_t color, size_t ox, size_t y);
-
 void newline(void);
-
 void putchar(const char c);
+void display_prompt(void);
+
+/* CURSOR */
+void move_cursor(const int x, const int y);
+uint16_t get_cursor_pos(void);
+uint16_t get_cursor_x(const uint16_t pos);
+uint16_t get_cursor_y(const uint16_t pos);
 
 #endif /* KFS_SCREEN_H */

@@ -7,14 +7,13 @@
 #include "io.h"
 #include "screen.h"
 #include "date.h"
-#include "cursor.h"
 #include "draw.h"
 
 extern uint8_t g_current_screen;
 
 void clear_input(void);
-void display_prompt(void);
 void handle_scancode(void);
+void clear_screen(void);
 
 static const char scancode_table[][2] = {
 	/* 0x00 - 0x0F */ {0, 0} , {'e', 'E'} , {'1', '!'} , {'2', '@'} , {'3', '#'} , {'4', '$'} , {'5', '%'} , {'6', '^'} , {'7', '&'} , {'8', '*'} , {'9', '('} , {'0', ')'} , {'-', '_'} , {'=', '+'} , {0, ','} , {'\t', 0} ,

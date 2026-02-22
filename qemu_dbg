@@ -1,5 +1,0 @@
-qemu-system-i386 -kernel isodir/boot/myos.elf \
-    -d int,cpu,pcall \
-    -D qemu.log \
-	-no-reboot
-

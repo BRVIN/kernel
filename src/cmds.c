@@ -1,48 +1,13 @@
 #include "cmds.h"
-#include <stdint.h>
-
-typedef struct {
-    uint16_t limit;
-    uint32_t base;
-} __attribute__((packed)) gdtr_t;
-
-extern gdtr_t gdtr_var;
-extern void read_gdtr(void);
-
-static void cmd_help(void)
-{
-    putstr("help   : open this help");
-	newline();
-    putstr("exit   : shutdown system");
-	newline();
-    putstr("date   : display current date");
-	newline();
-    putstr("uname  : display os specs");
-	newline();
-    putstr("whoami : display current user");
-	newline();
-    putstr("version : display kernel build time");
-	newline();
-    putstr("clear : clear the terminal screen");
-	newline();
-    putstr("gdt   : display GDT address");
-	newline();
-    putstr("stacktest : push/pop stack test");
-}
-
-static inline void __exit(unsigned short port, unsigned short val)
-{
-	__asm__ volatile("outw %0, %1" : : "a"(val), "Nd"(port));
-}
 
 static void cmd_exit(void)
 {
-	//__exit(0x501, 0x2000); // todo check this shit
-	__exit(0x604, 0x2000);
-	while (1)
-	{
-		__asm__ volatile("hlt");
-	};
+	isa_exit();
+}
+
+static void cmd_reboot(void)
+{
+	reboot();
 }
 
 static void cmd_date(void)
@@ -50,150 +15,112 @@ static void cmd_date(void)
 	print_date();
 }
 
-static void cmd_uname(void)
-{
-    putstr("myos.bin: ELF 32-bit LSB executable, Intel 80386");
-}
-
-static void cmd_whoami(void)
-{
-    putstr("root");
-}
-
-static void cmd_version(void)
-{
-	putstr("version 0.2 - Compiled on ");
-	putstr(__DATE__);
-	putstr(" at ");
-	putstr(__TIME__);
-}
-
 static void cmd_clear(void)
 {
-	for (size_t i = 0; i < (VGA_HEIGHT * VGA_WIDTH); ++i)
-	{
-		g_screens[g_current_screen][i] = EMPTY_VGA;
-		clear_input();
-	}
-	g_x[g_current_screen] = 0;
-	g_y[g_current_screen] = 3;
+	clear_screen();
 }
-
-extern uint32_t stack_top;
-extern uint32_t stack_bottom;
-
-static void dump_stack(uint32_t nbLinesToPrint)
-{
-	// stack_bottom	plus petite	Limite basse de la pile
-	// ESP	entre les deux	Sommet actuel de la pile (descend avec push)
-	// stack_top	plus grande	Sommet initial / ESP initial
-	// pile descendante -> stack_bottom < ESP <= stack_top
-
-    uint32_t *esp;
-    asm volatile("mov %%esp, %0" : "=r"(esp));
-
-	putstr("------ dump_stack ------");
-	newline();
-	putstr("Stack bottom: ");
-	puthex((uint32_t)&stack_bottom);
-	newline();
-	putstr("------------------------");
-	newline();
-
-	// putstr("Current ESP : "); // Extended Stack Pointer (sommet de la pile)
-	// puthex((uint32_t)esp);
-	// newline();
-
-	for (int i = 0; i < nbLinesToPrint; i++)
-    {
-        puthex((uint32_t)(esp + i));
-        putstr(" : ");
-        puthex(esp[i]);
-		if (i == 0) {
-			putstr(" -> Current ESP (sommet de la pile)");
-		}
-        newline();
-    }
-
-	putstr("------------------------");
-	newline();
-	putstr("Stack top (ESP initial): ");
-	puthex((uint32_t)&stack_top);
-	newline();
-
-}
-
-static void cmd_segments(void)
-{
-    uint16_t cs, ds, ss; // code / data / stack segments
-
-	asm volatile("mov %%cs, %0" : "=r"(cs));
-	asm volatile("mov %%ds, %0" : "=r"(ds));
-	asm volatile("mov %%ss, %0" : "=r"(ss));
-
-	putstr("CS:");
-	puthex(cs);
-	putstr(" DS:");
-	puthex(ds);
-	putstr(" SS:");
-	puthex(ss);
-	newline();
-}
-
-extern uint32_t gdt_start;
-extern uint32_t gdt_end;
-extern uint32_t gdt_descriptor;
 
 static void cmd_gdt(void)
 {
-	read_gdtr(); // asm call
-	gdtr_t snapshot = gdtr_var;
+	cmd_clear();
+	gdtr_t gdtr = read_gdtr();
+    puthex_tnl("GDTR base : ", gdtr.base);
+    puthex_tnl("GDTR limit: ", gdtr.limit);
 
-    putstr("GDTR limit:");
-    puthex(snapshot.limit);
-    newline();
-    putstr("GDTR base:");
-    puthex(snapshot.base); // should be 0x800
-    newline();
-    putstr("gdt_start:"); // should be 0x800
-    puthex((uint32_t)&gdt_start);
-    putstr(" gdt_end:");
-    puthex((uint32_t)&gdt_end);
-    putstr(" gdt_descriptor:");
-    puthex((uint32_t)&gdt_descriptor);
-    newline();
-	cmd_segments();
-	dump_stack(8);
+	extern uint32_t gdt_start, gdt_end;
+    puthex_tnl("gdt_start : ", (uint32_t)&gdt_start);
+    puthex_tnl("gdt_end   : ", (uint32_t)&gdt_end);
+
+	print_gdt_selectors();
+	print_gdt_segments();
 }
 
-static void cmd_stacktest(void)
+static void dump_stack(uint32_t nbLinesToPrint)
 {
-    uint32_t a = 0x11111111;
-    uint32_t b = 0x22222222;
-    uint32_t c = 0x33333333;
+	extern uint32_t stack_top;
+	extern uint32_t stack_bottom;
 
-    // dump_stack(5);
+	// EBP Base Pointer = debut de la frame stack de la fonction
+	uint32_t *ebp;
+	asm volatile("mov %%ebp, %0" : "=r"(ebp));
+	puthex_tnl("EBP: ", (uint32_t)ebp);
+
+	uint32_t example1 = 0x42e11111;
+	uint32_t example2 = 0x42e22222;
+	uint32_t example3 = 0x42e33333;
+
+	// ESP stack pointer = sommet de la pile actuel
+    uint32_t *esp;
+    asm volatile("mov %%esp, %0" : "=r"(esp));
+	puthex_tnl("ESP: ", (uint32_t)esp);
+
+	puthex_t("top: ", (uint32_t)&stack_top);
+	puthex_t(" bottom: ", (uint32_t)&stack_bottom);
+	putstr(" size: ");
+	putnbr_nl((uint32_t)&stack_top - (uint32_t)&stack_bottom);
+
+	putstr_nl("------------------------");
+	putstr_nl("addr       | value");
+	for (int i = 0; i < nbLinesToPrint; i++)
+	{
+		uint32_t *addr = esp + i;
+		puthex((uint32_t)addr);
+		putstr(" : ");
+        puthex(*addr);
+		if (*addr == *esp) {
+			putstr(" <- Current ESP");
+		}
+		if (*addr == *ebp) {
+			putstr(" <- Current EBP");
+		}
+		newline();
+    }
+	putstr_nl("------------------------");
+}
+
+static void cmd_stk(void)
+{
+	dump_stack(14);
+}
+
+static void cmd_stkt(void)
+{
+    uint32_t *esp;
+    asm volatile("mov %%esp, %0" : "=r"(esp));
+	for (int i = 0; i < 3; i++)
+	{
+		uint32_t *addr = esp + i;
+		puthex((uint32_t)addr);
+		putstr(" : ");
+        puthex_nl(*addr);
+	}
 
     asm volatile(
         "push %0\n"
         "push %1\n"
         "push %2\n"
         :
-        : "r"(a), "r"(b), "r"(c)
+        : "r"(0x42e11111), "r"(0x42e22222), "r"(0x42e33333)
     );
 
 	putstr("Pushed values: ");
-	puthex(a);
+	puthex(0x42e11111);
 	putstr(", ");
-	puthex(b);
+	puthex(0x42e22222);
 	putstr(", ");
-	puthex(c);
-	newline();
+	puthex_nl(0x42e33333);
 
-    dump_stack(16);
+    asm volatile("mov %%esp, %0" : "=r"(esp));
+	for (int i = 0; i < 3; i++)
+	{
+		uint32_t *addr = esp + i;
+		puthex((uint32_t)addr);
+		putstr(" : ");
+        puthex_nl(*addr);
+	}
 
-    uint32_t val1, val2, val3;
-    asm volatile(
+	uint32_t val1, val2, val3;
+	asm volatile(
         "pop %0\n"
         "pop %1\n"
         "pop %2\n"
@@ -201,36 +128,57 @@ static void cmd_stacktest(void)
     );
 
 	putstr("Popped values: ");
-	puthex(val1);
+	puthex(val3);
 	putstr(", ");
 	puthex(val2);
 	putstr(", ");
-	puthex(val3);
-	newline();
+	puthex_nl(val1);
+
+    asm volatile("mov %%esp, %0" : "=r"(esp));
+	for (int i = 0; i < 3; i++)
+	{
+		uint32_t *addr = esp + i;
+		puthex((uint32_t)addr);
+		putstr(" : ");
+        puthex_nl(*addr);
+	}
 }
 
-
-typedef void (*cmd_func)(void);
-
-typedef struct {
-	const char *name;
-	cmd_func function;
-} KernelCommand;
-
-KernelCommand kcmds[] = {
-	{"help", cmd_help},
-	{"exit", cmd_exit},
-	{"date", cmd_date},
-	{"uname", cmd_uname},
-	{"whoami", cmd_whoami},
-	{"version", cmd_version},
-	{"clear", cmd_clear},
-	{"gdt", cmd_gdt},
-	{"stacktest", cmd_stacktest},
-};
+static void cmd_help(void)
+{
+	cmd_clear();
+	putstr_nl("ARMADILLO-1 v0.25 : ELF 32-bit LSB executable, Intel 80386 (x86)");
+	putstr_nl("help    : open this help");
+    putstr_nl("exit    : shutdown system");
+    putstr_nl("reboot  : reboot system");
+    putstr_nl("date    : display current date");
+    putstr_nl("clear   : clear the terminal screen");
+    putstr_nl("gdt     : display GDT address");
+    putstr_nl("stk     : stack dump");
+    putstr_nl("stkt    : push/pop stack test");
+}
 
 void parse_commands(const char *input)
 {
+	typedef void (*cmd_func)(void);
+
+	typedef struct
+	{
+		const char *name;
+		cmd_func function;
+	} KernelCommand;
+
+	KernelCommand kcmds[] = {
+		{"help", cmd_help},
+		{"exit", cmd_exit},
+		{"reboot", cmd_reboot},
+		{"date", cmd_date},
+		{"clear", cmd_clear},
+		{"gdt", cmd_gdt},
+		{"stk", cmd_stk},
+		{"stkt", cmd_stkt},
+	};
+
 	size_t count = sizeof(kcmds) / sizeof(KernelCommand);
 
 	for (size_t i = 0; i < count; i++)

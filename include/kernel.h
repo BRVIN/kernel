@@ -12,14 +12,11 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "gdt.h"
 #include "utils.h"
 #include "io.h"
 #include "screen.h"
-#include "printk.h"
 #include "keyboard.h"
 #include "draw.h"
-#include "cursor.h"
 #include "date.h"
 
 

@@ -16,8 +16,10 @@ void draw_guides()
 void draw_42_logo()
 {
 	const uint8_t color = VGA_COLOR_WHITE;
-	int y = 10;
-	int x = 25;
+	int ox = 14;
+	int oy = 6;
+	int x = ox;
+	int y = oy;
 	putstr_at("          :::      ::::::::  ", color, x, y++);
 	putstr_at("        :+:      :+:    :+:  ", color, x, y++);
 	putstr_at("      +:+ +:+         +:+    ", color, x, y++);
@@ -25,6 +27,20 @@ void draw_42_logo()
 	putstr_at("  +#+#+#+#+#+   +#+          ", color, x, y++);
 	putstr_at("       #+#    #+#            ", color, x, y++);
 	putstr_at("      ###   #####es#         ", color, x, y++);
+	putstr_at("                             ", color, x, y++);
+	x = ox + 25;
+	y = oy + 3;
+	putstr_at("      .::rrr::-.  . .", color, x, y++);
+	putstr_at("     /:'///' `::>/|/ ", color, x, y++);
+	putstr_at("   .',  |||   `/( 0\\ ", color, x, y++);
+	putstr_at("~~~-'`-##```-##' `-_\\", color, x, y++);
+	x = ox + 8;
+	y = oy + 9;
+	putstr_at("ARMADILLO-1 v0.25 eamar - sloquet", color, x, y++);
+	putstr_at("                                 ", color, x, y++);
+	putstr_at("                                 ", color, x, y++);
+	putstr_at("  -- Press a key to continue --  ", color, x, y++);
+
 }
 
 void draw_reset_top_bar()

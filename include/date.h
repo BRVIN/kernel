@@ -3,7 +3,6 @@
 
 #include <stddef.h>
 #include <stdbool.h>
-#include "screen.h"
 #include "utils.h"
 
 void print_date(void);
