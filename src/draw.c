@@ -39,7 +39,7 @@ void draw_42_logo()
 	putstr_at("ARMADILLO-1 v0.25 eamar - sloquet", color, x, y++);
 	putstr_at("                                 ", color, x, y++);
 	putstr_at("                                 ", color, x, y++);
-	putstr_at("  -- Press a key to continue --  ", color, x, y++);
+	putstr_at(" -- Press any key to continue -- ", color, x, y++);
 
 }
 
