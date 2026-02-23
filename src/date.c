@@ -40,6 +40,7 @@ void print_date(void)
     get_system_time(&h, &min, &s);
 
     // year fix
+    // Update fix for year 3000
     y += 2000;
     //hour fix (+1h)
     h = (h + 1) % 24;
