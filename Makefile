@@ -2,7 +2,7 @@ CC = /home/ubuntu/opt/cross/bin/i686-elf-gcc
 AS = /home/ubuntu/opt/cross/bin/i686-elf-as
 LD = /home/ubuntu/opt/cross/bin/i686-elf-gcc
 
-CFLAGS = -march=i386 -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding
+CFLAGS = -march=i386 -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -O0 -g
 ASFLAGS = -march=i386
 LDFLAGS = -T linker.ld -nostdlib -nodefaultlibs
 
@@ -62,4 +62,4 @@ debug: $(NAME)
 		-ex "set confirm off" \
 		-ex "continue"
 
-.PHONY: all clean fclean re start
+.PHONY: all clean fclean re start debug
