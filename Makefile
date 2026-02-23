@@ -2,9 +2,9 @@ CC = /home/ubuntu/opt/cross/bin/i686-elf-gcc
 AS = /home/ubuntu/opt/cross/bin/i686-elf-as
 LD = /home/ubuntu/opt/cross/bin/i686-elf-gcc
 
-CFLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -O2 -march=i386 -m32 -g -O0
-ASFLAGS =
-LDFLAGS = -T linker.ld -ffreestanding -O2 -nostdlib -lgcc -march=i386 -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs
+CFLAGS = -march=i386 -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding
+ASFLAGS = -march=i386
+LDFLAGS = -T linker.ld -nostdlib -nodefaultlibs
 
 INC_DIR = -Iinclude
 
