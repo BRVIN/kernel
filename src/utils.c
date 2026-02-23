@@ -158,19 +158,19 @@ static void print_selector(uint16_t selector, const char *name)
 void print_gdt_selectors()
 {
 	putstr_nl("----- GDT selectors -----");
-	putstr_nl("addr       | id | ring | selector");
+	putstr_nl("value      | id | ring | selector");
 	print_selector(get_cs(), "CS");
 	print_selector(get_ds(), "DS");
 	print_selector(get_ss(), "SS");
 }
 
-void print_gdt_segments()
+void print_gdt_segments(gdtr_t gdtr)
 {
 	putstr_nl("----- GDT segments -----");
 	putstr_nl("addr       | id | ring");
     for (int i = 0; i <= 6; i++)
     {
-		puthex(i * 0x8);
+		puthex(i * 0x8 + gdtr.base);
 		putstr(" | ");
 		putnbr(i);
 		putstr("  | ");
@@ -178,3 +178,4 @@ void print_gdt_segments()
 		newline();
 	}
 }
+

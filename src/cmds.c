@@ -32,7 +32,7 @@ static void cmd_gdt(void)
     puthex_tnl("gdt_end   : ", (uint32_t)&gdt_end);
 
 	print_gdt_selectors();
-	print_gdt_segments();
+	print_gdt_segments(gdtr);
 }
 
 static void dump_stack(uint32_t nbLinesToPrint)
@@ -63,11 +63,11 @@ static void dump_stack(uint32_t nbLinesToPrint)
 	putstr_nl("addr       | value");
 	for (int i = 0; i < nbLinesToPrint; i++)
 	{
-		uint32_t *addr = esp + i;
+		uint32_t *addr = &(esp[i]);
 		puthex((uint32_t)addr);
 		putstr(" : ");
         puthex(*addr);
-		if (*addr == *esp) {
+		if (i == 0) {
 			putstr(" <- Current ESP");
 		}
 		if (*addr == *ebp) {
